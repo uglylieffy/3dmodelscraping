@@ -39,9 +39,9 @@ To get a local copy up and running follow these simple example steps.
 
 This is a list of libraries you need to run the bash and how to install them.
 
-1. python 3.x, click here for a tutorial [here] (https://www.python.org/downloads/).
+1. python 3.x, click here for a tutorial [here](https://www.python.org/downloads/).
 
-2. beatifulsoup
+3. beatifulsoup
 ```sh
 
 pip install beautifulsoup4
