@@ -13,6 +13,7 @@ driver = webdriver.Chrome()
 # insert URL here to collect initial urls to be recorded
 url = 'https://sketchfab.com/search?features=downloadable&q=dinosaur+fossil&type=models'
 
+
 # load and scroll to the bottom of the page
 driver.get(url)
 print('moving...')
@@ -30,15 +31,22 @@ for i in range(1,30):
     time.sleep(3)
 
 
-# parse over the pre-loaded page 
+# Now, parse over the pre-loaded page 
+# find links of the detailed webpages 
 sketchfabList = []
 links = driver.find_elements(By.CLASS_NAME,'card-model__thumbnail-link')
-print(len(links))
-
 # loop thru all loaded ietms on the page 
 for link in links:
     sketchfabList.append(link.get_attribute("href"))
+# find links to corresponding images 
+sketchfabImgList = []
+imgs = driver.find_elements(By.CSS_SELECTOR,'.card__main.card-model__thumbnail')
+for link in imgs:
+    img = link.find_elements(By.CLASS_NAME, 'image-container__image')
+    sketchfabImgList.append(img[0].get_attribute("src"))
+print(len(sketchfabList), len(sketchfabImgList))
+
 
 # turn sketchfabList into csv file 
-sketchfabList_df = pd.DataFrame(sketchfabList, columns=['Sketchfab_URL'])
+sketchfabList_df = pd.DataFrame({'Sketchfab_URL':sketchfabList, 'SketchfabImg_URL':sketchfabImgList})
 sketchfabList_df.to_csv('sketchfab_url.csv', index=False)
