@@ -4,18 +4,26 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 # load in the websites
-sketchfabList_df = pd.read_csv('../sketchfab_url.csv')
+sketchfabList_df = pd.read_csv('./sketchfab_url.csv')
+
 
 # create an empty dataframe to store details about models
 info_df = pd.DataFrame(columns=['Title', 'Publisher', 'Description', 
-                                'Paid', 'Downloads', 'Views', 'Likes', 'Price', 'Link'])
+                                'Paid', 'Downloads', 'Views', 'Likes', 'Price', 'Date', 'Link', 'imgLink'])
 info = []
 n = 0
 
+
 # loop thru the websites
-for link in sketchfabList_df['Sketchfab_URL']:
+for index, row in sketchfabList_df.iterrows():
+    # set paid to be True (default) 
     paid = True
+
+    # assign link and imglink 
+    link = row['Sketchfab_URL']
+    imgLink = row['SketchfabImg_URL']
     print(link)
+
     # web scraping 
     html = requests.get(link)
     soup = BeautifulSoup(html.content, 'html.parser')
@@ -23,6 +31,10 @@ for link in sketchfabList_df['Sketchfab_URL']:
     # title, publisher
     title = (soup.find('span', class_='model-name__label')).text
     publisher = (soup.find('span', class_='username-wrapper')).text
+
+    # published date 
+    date_parent = (soup.find('span', class_='model-meta-info help'))
+    date = date_parent.find('div', class_='tooltip tooltip-down').text
 
     # description of the model
     descrip_list = []
@@ -61,16 +73,8 @@ for link in sketchfabList_df['Sketchfab_URL']:
         # price 
         price = 'n/a'
 
-    # load data into dataframe 
-    # info['Title'] = title
-    # info['Publisher'] = publisher
-    # info['Description'] = descrip_list
-    # info['Paid'] = paid
-    # info['Downloads'] = downloads
-    # info['Views'] = views
-    # info['Likes'] = likes
-    # info['Price'] = price
-    # info['Link'] = link
+
+    # append data into dataframe 
     info.append(title)
     info.append(publisher)
     info.append(descrip_list)
@@ -79,9 +83,14 @@ for link in sketchfabList_df['Sketchfab_URL']:
     info.append(views)
     info.append(likes)
     info.append(price)
+    info.append(date)
     info.append(link)
+    info.append(imgLink)
 
+
+    # load data into dataframe 
     info_df.loc[n] = info
     n+=1
     info.clear()
+
 info_df.to_csv('web_scrap_sf.csv', index=False)
