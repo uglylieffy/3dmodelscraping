@@ -51,4 +51,5 @@ print(len(sketchfabList), len(sketchfabImgList))
 sketchfabList_df = pd.DataFrame({'Sketchfab_URL':sketchfabList, 'SketchfabImg_URL':sketchfabImgList})
 # Drop any duplicates due to webpage's nature 
 sketchfabList_df = sketchfabList_df.drop_duplicates()
+# save dataframe as csv 
 sketchfabList_df.to_csv('sketchfab_url.csv', index=False)
